@@ -86,14 +86,14 @@ printer_thread.start()
 pwm_thread.start()
 
 
-def switch_event1(event,dc):
+def switch_event1(event):
     if event == PushButton.BUTTONDOWN:
 	print_q.put("UP")
     elif event == PushButton.BUTTONUP:
 	print_q.put("DOWN")
         pwm_q.put(2)
     return
-def switch_event2(event,dc):
+def switch_event2(event):
     if event == PushButton.BUTTONDOWN:
 	print_q.put("UP2")
     elif event == PushButton.BUTTONUP:
