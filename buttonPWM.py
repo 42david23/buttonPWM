@@ -53,7 +53,7 @@ class PWMWorkerThread(threading.Thread):
 		if pwm_change > 0:
                     if self.dc <= 100 + pwm_change:
        		        self.dc += pwm_change
-       		        self.p.ChangeDutyCycle(dc)
+       		        self.p.ChangeDutyCycle(self.dc)
        		        print(dc)
        		        time.sleep(0.3)
 		    else:
@@ -62,13 +62,13 @@ class PWMWorkerThread(threading.Thread):
 		else:
 		    if self.dc <= 0 - pwm_change:
        		        self.dc += pwm_change
-       		        self.p.ChangeDutyCycle(dc)
+       		        self.p.ChangeDutyCycle(self.dc)
        		        print(dc)
        		        time.sleep(0.3)
 		    else:
        			self.p.ChangeDutyCycle(100)
        			time.sleep(0.3)
-                print("%d") % (dc)
+                print("%d") % (self.dc)
             except Queue.Empty:
                 continue
 

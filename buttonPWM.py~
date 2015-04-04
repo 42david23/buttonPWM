@@ -68,7 +68,7 @@ class PWMWorkerThread(threading.Thread):
 		    else:
        			self.p.ChangeDutyCycle(100)
        			time.sleep(0.3)
-                print("%d") % (dc)
+                print("%d") % (self.dc)
             except Queue.Empty:
                 continue
 
