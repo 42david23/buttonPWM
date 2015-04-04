@@ -51,7 +51,7 @@ class PWMWorkerThread(threading.Thread):
             try:
                 pwm_change = self.pwm_q.get(True, 0.05)
 		if pwm_change > 0:
-                    if self.dc <= 100 + pwm_change:
+                    if self.dc <= 100 - pwm_change:
        		        self.dc += pwm_change
        		        self.p.ChangeDutyCycle(self.dc)
        		        print(self.dc)
