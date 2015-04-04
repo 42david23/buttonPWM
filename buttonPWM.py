@@ -7,14 +7,7 @@ from Adafruit_CharLCD import Adafruit_CharLCD
 
 BUTTON1 = 2
 BUTTON2 = 3
-PWM = 14
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PWM,GPIO.OUT)
-p = GPIO.PWM(PWM,0.1)
-p.start(0)
-
-dc = 0
 
 class PrinterWorkerThread(threading.Thread):
     def __init__(self, print_q):
@@ -43,30 +36,37 @@ class PrinterWorkerThread(threading.Thread):
 class PWMWorkerThread(threading.Thread):
     def __init__(self, pwm_q):
         super(PWMWorkerThread, self).__init__()
+	self.PWM = 14
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(self.PWM,GPIO.OUT)
+	self.p = GPIO.PWM(self.PWM,0.1)
+	self.p.start(0)
+	self.dc = 0
         self.pwm_q = pwm_q
         self.stoprequest = threading.Event()
+	
 
     def run(self):
         while not self.stoprequest.isSet():
             try:
                 pwm_change = self.pwm_q.get(True, 0.05)
 		if pwm_change > 0:
-                    if dc <= 100 + pwm_change:
-       		        dc += pwm_change
-       		        p.ChangeDutyCycle(dc)
+                    if self.dc <= 100 + pwm_change:
+       		        self.dc += pwm_change
+       		        self.p.ChangeDutyCycle(dc)
        		        print(dc)
        		        time.sleep(0.3)
 		    else:
-       			p.ChangeDutyCycle(100)
+       			self.p.ChangeDutyCycle(100)
        			time.sleep(0.3)
 		else:
-		    if dc <= 0 - pwm_change:
-       		        dc += pwm_change
-       		        p.ChangeDutyCycle(dc)
+		    if self.dc <= 0 - pwm_change:
+       		        self.dc += pwm_change
+       		        self.p.ChangeDutyCycle(dc)
        		        print(dc)
        		        time.sleep(0.3)
 		    else:
-       			p.ChangeDutyCycle(100)
+       			self.p.ChangeDutyCycle(100)
        			time.sleep(0.3)
                 print("%d") % (dc)
             except Queue.Empty:
