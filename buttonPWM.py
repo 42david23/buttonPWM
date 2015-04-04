@@ -6,7 +6,7 @@ from button_class import PushButton
 from Adafruit_CharLCD import Adafruit_CharLCD
 
 BUTTON1 = 2
-BUTTON2 = 3 
+BUTTON2 = 3
 PWM = 14
 
 class PrinterWorkerThread(threading.Thread):
@@ -39,17 +39,39 @@ printer_thread = PrinterWorkerThread(print_q)
 
 printer_thread.start()
 
-def switch_event1(event):
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(PWM,GPIO.OUT)
+p = GPIO.PWM(PWM,0.1)
+p.start(0)
+
+dc = 0
+
+
+def switch_event1(event,dc):
     if event == PushButton.BUTTONDOWN:
 	print_q.put("UP")
     elif event == PushButton.BUTTONUP:
-	print_q.put("DOWN")
-    return    
-def switch_event2(event):
+	print_q.put("DOWN %d") %(dc)
+        if dc <= 98:
+            dc += 2
+            p.ChangeDutyCycle(dc)
+            time.sleep(0.3)
+        else:
+            p.ChangeDutyCycle(100)
+            time.sleep(0.3)
+    return
+def switch_event2(event,dc):
     if event == PushButton.BUTTONDOWN:
 	print_q.put("UP2")
     elif event == PushButton.BUTTONUP:
 	print_q.put("DOWN2")
+        if dc <= 98:
+            dc += 2
+            p.ChangeDutyCycle(dc)
+            time.sleep(0.3)
+        else:
+            p.ChangeDutyCycle(100)
+            time.sleep(0.3)
     return
 
 pbutton1 = PushButton(BUTTON1,switch_event1)
